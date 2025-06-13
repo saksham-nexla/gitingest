@@ -59,7 +59,7 @@ Thanks for your interest in contributing to Gitingest! 🚀 Gitingest aims to be
    2. Run the local web server:
 
       ``` bash
-      uvicorn server.main:app
+      uvicorn server.main:app --reload
       ```
 
    3. Open your browser and navigate to `http://localhost:8000` to see the app running.
