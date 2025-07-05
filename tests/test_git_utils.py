@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from gitingest.utils.exceptions import InvalidGitHubTokenError
 from gitingest.utils.git_utils import create_git_auth_header, create_git_command, is_github_host, validate_github_token
 
 if TYPE_CHECKING:
@@ -31,10 +32,10 @@ if TYPE_CHECKING:
         "gho_" + "E" * 36,
     ],
 )
-def test_validate_github_token_valid(token: str, recwarn: pytest.WarningsRecorder) -> None:
-    """``validate_github_token`` should silently accept well-formed tokens."""
+def test_validate_github_token_valid(token: str) -> None:
+    """validate_github_token should accept properly-formatted tokens."""
+    # Should not raise any exception
     validate_github_token(token)
-    assert not recwarn, "validate_github_token should not warn on valid tokens"
 
 
 @pytest.mark.parametrize(
@@ -48,10 +49,9 @@ def test_validate_github_token_valid(token: str, recwarn: pytest.WarningsRecorde
         "",  # Empty string
     ],
 )
-def test_validate_github_token_invalid_warns(token: str) -> None:
-    """Test that malformed tokens trigger a UserWarning carrying the helper message."""
-    warn_msg = "Invalid GitHub token format"
-    with pytest.warns(UserWarning, match=warn_msg):
+def test_validate_github_token_invalid(token: str) -> None:
+    """Test that ``validate_github_token`` raises ``InvalidGitHubTokenError`` on malformed tokens."""
+    with pytest.raises(InvalidGitHubTokenError):
         validate_github_token(token)
 
 
