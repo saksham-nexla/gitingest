@@ -1,0 +1,65 @@
+---
+description: "Guidelines for Git operations, repository cloning, and authentication"
+---
+
+# Git Operations and Repository Handling
+
+## Repository Cloning
+- **Clone Function**: Use [src/gitingest/clone.py](mdc:src/gitingest/clone.py) for all cloning operations
+- **Temporary Directories**: Always use temporary directories for cloned repositories
+- **Cleanup**: Ensure proper cleanup of temporary directories after processing
+- **Error Handling**: Handle clone failures gracefully with meaningful error messages
+
+## Authentication
+- **Auth Utils**: Use authentication utilities from [src/gitingest/utils/auth.py](mdc:src/gitingest/utils/auth.py)
+- **Token Management**: Securely handle authentication tokens
+- **Multiple Providers**: Support GitHub, GitLab, and other Git hosting providers
+- **Fallback**: Provide fallback methods for authentication failures
+
+## Git Utilities
+- **Git Utils**: Use utilities from [src/gitingest/utils/git_utils.py](mdc:src/gitingest/utils/git_utils.py)
+- **Repository Validation**: Validate repository URLs and accessibility
+- **Branch Handling**: Support specific branch and commit processing
+- **Remote Operations**: Handle remote repository operations efficiently
+
+## Query Parsing
+- **URL Parsing**: Use [src/gitingest/query_parser.py](mdc:src/gitingest/query_parser.py) for URL parsing
+- **Host Agnostic**: Support multiple Git hosting providers
+- **Parameter Extraction**: Extract repository owner, name, branch, and path information
+- **Validation**: Validate parsed query parameters
+
+## Repository Processing
+- **Ingestion**: Use [src/gitingest/ingestion.py](mdc:src/gitingest/ingestion.py) for repository processing
+- **File Filtering**: Respect .gitignore and custom ignore patterns
+- **Binary Detection**: Skip binary files during processing
+- **Size Limits**: Implement reasonable size limits for processing
+
+## Ignore Patterns
+- **Pattern Matching**: Use [src/gitingest/utils/ignore_patterns.py](mdc:src/gitingest/utils/ignore_patterns.py)
+- **Gitignore Support**: Fully support .gitignore file patterns
+- **Custom Patterns**: Allow custom ignore patterns
+- **Performance**: Optimize pattern matching for large repositories
+
+## Error Handling
+- **Network Errors**: Handle network connectivity issues
+- **Authentication Errors**: Provide clear authentication error messages
+- **Permission Errors**: Handle permission denied errors gracefully
+- **Timeout Handling**: Implement timeouts for long-running operations
+
+## Security Considerations
+- **Token Security**: Never log or expose authentication tokens
+- **Path Traversal**: Prevent path traversal attacks
+- **Resource Limits**: Implement limits to prevent resource exhaustion
+- **Sandboxing**: Process repositories in isolated environments
+
+## Performance Optimization
+- **Shallow Clones**: Use shallow clones when possible
+- **Parallel Processing**: Process multiple files in parallel
+- **Caching**: Cache repository metadata when appropriate
+- **Memory Management**: Monitor memory usage during processing
+
+## Testing Git Operations
+- **Mock Repositories**: Create mock repositories for testing
+- **Authentication Tests**: Test authentication mechanisms
+- **Error Scenarios**: Test various error conditions
+- **Performance Tests**: Include performance tests for large repositories

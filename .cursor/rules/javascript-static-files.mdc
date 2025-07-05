@@ -1,0 +1,89 @@
+---
+globs: "src/static/**/*.js,src/static/**/*.css,src/static/**/*.html"
+---
+
+# JavaScript and Static File Development Guidelines
+
+## JavaScript Organization
+- **Modular Structure**: Organize JavaScript files by functionality in [src/static/js/](mdc:src/static/js/)
+- **File Naming**: Use descriptive names that match the page or component functionality
+- **Dependencies**: Keep external dependencies minimal and well-documented
+
+## Core JavaScript Files
+- **Index Page**: [src/static/js/index.js](mdc:src/static/js/index.js) - Homepage functionality
+- **Git Operations**: [src/static/js/git.js](mdc:src/static/js/git.js) - Git-related page functionality
+- **Git Forms**: [src/static/js/git_form.js](mdc:src/static/js/git_form.js) - Form handling and validation
+- **Navigation**: [src/static/js/navbar.js](mdc:src/static/js/navbar.js) - Navigation behavior
+- **Utilities**: [src/static/js/utils.js](mdc:src/static/js/utils.js) - Shared utility functions
+
+## Code Quality
+- **ES6+ Features**: Use modern JavaScript features where appropriate
+- **Event Handling**: Use proper event delegation and cleanup
+- **Error Handling**: Implement comprehensive error handling for user interactions
+- **Performance**: Optimize for performance, especially on mobile devices
+
+## DOM Manipulation
+- **Query Selectors**: Use efficient query selectors
+- **Event Listeners**: Properly add and remove event listeners
+- **DOM Updates**: Batch DOM updates for better performance
+- **Accessibility**: Ensure JavaScript doesn't break accessibility features
+
+## Form Handling
+- **Validation**: Implement client-side validation with server-side backup
+- **User Feedback**: Provide clear feedback for form submissions
+- **Error States**: Handle and display form errors appropriately
+- **Progressive Enhancement**: Ensure forms work without JavaScript
+
+## AJAX and API Calls
+- **Fetch API**: Use modern fetch API for HTTP requests
+- **Error Handling**: Handle network errors and API failures gracefully
+- **Loading States**: Show loading indicators during API calls
+- **Response Handling**: Properly handle different response types
+
+## Analytics and Tracking
+- **PostHog**: Use PostHog for analytics as configured in [src/static/js/posthog.js](mdc:src/static/js/posthog.js)
+- **Privacy**: Respect user privacy and consent preferences
+- **Event Tracking**: Track meaningful user interactions
+- **Performance Monitoring**: Monitor JavaScript performance
+
+## Static Assets
+- **Images**: Optimize images for web delivery
+- **Icons**: Use SVG icons from [src/static/icons/](mdc:src/static/icons/) for scalability
+- **Favicons**: Maintain complete favicon set in [src/static/favicons/](mdc:src/static/favicons/)
+- **Robots.txt**: Keep [src/static/robots.txt](mdc:src/static/robots.txt) updated
+
+## CSS and Styling
+- **Tailwind CSS**: Primary styling framework
+- **Custom Components**: Additional styles in [src/static/components/](mdc:src/static/components/)
+- **Responsive Design**: Ensure all styles work across device sizes
+- **Performance**: Minimize CSS bundle size
+
+## File Organization
+- **Logical Grouping**: Group related files together
+- **Clear Naming**: Use descriptive file names
+- **Documentation**: Include comments for complex functionality
+- **Version Control**: Avoid committing build artifacts
+
+## Browser Compatibility
+- **Modern Browsers**: Target modern evergreen browsers
+- **Polyfills**: Use polyfills sparingly and only when necessary
+- **Testing**: Test across different browsers and devices
+- **Graceful Degradation**: Ensure basic functionality works everywhere
+
+## Security
+- **XSS Prevention**: Sanitize user input and avoid innerHTML with user data
+- **CSRF Protection**: Work with server-side CSRF protection
+- **Content Security Policy**: Ensure JavaScript works with CSP
+- **Data Validation**: Validate all user input on client and server
+
+## Performance Optimization
+- **Lazy Loading**: Load resources only when needed
+- **Caching**: Leverage browser caching for static assets
+- **Minification**: Minify JavaScript and CSS for production
+- **Bundle Optimization**: Optimize file sizes and loading order
+
+## Debugging and Development
+- **Console Logging**: Use appropriate console methods for debugging
+- **Error Reporting**: Implement error reporting for production issues
+- **Development Tools**: Use browser dev tools effectively
+- **Testing**: Include testing for critical JavaScript functionality

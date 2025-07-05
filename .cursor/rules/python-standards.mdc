@@ -1,0 +1,51 @@
+---
+globs: "*.py"
+---
+
+# Python Coding Standards for GitIngest
+
+## Code Style & Formatting
+- **Line Length**: Maximum 119 characters (as configured in [pyproject.toml](mdc:pyproject.toml))
+- **Formatting**: Use `ruff format` for consistent code formatting
+- **Import Sorting**: Use `isort` with black profile for import organization
+- **Linting**: Use `ruff` and `pylint` for code quality checks
+
+## Type Hints
+- **Required**: All functions and methods must have complete type hints
+- **Compatibility**: Use `typing_extensions` for Python < 3.10 compatibility
+- **Future Annotations**: Use `from __future__ import annotations` for forward references
+
+## Imports
+- **Standard Library**: Import standard library modules first
+- **Third Party**: Import third-party packages second
+- **Local Imports**: Import local modules last
+- **Absolute Imports**: Prefer absolute imports over relative imports
+- **Type Imports**: Use `from typing import TYPE_CHECKING` for type-only imports
+
+## Error Handling
+- **Custom Exceptions**: Use custom exceptions defined in [src/gitingest/utils/exceptions.py](mdc:src/gitingest/utils/exceptions.py)
+- **Specific Exceptions**: Catch specific exceptions rather than bare `except:`
+- **Error Messages**: Provide clear, actionable error messages
+- **Logging**: Use proper logging instead of `print()` statements
+
+## Async/Await Patterns
+- **Async Functions**: Use `async def` for I/O-bound operations
+- **Await**: Always await async functions
+- **Context Managers**: Use `async with` for async context managers
+- **Generators**: Use `async for` for async generators
+
+## Documentation
+- **Docstrings**: Use Google-style docstrings for all public functions/classes
+- **Type Documentation**: Include parameter and return types in docstrings
+- **Examples**: Include usage examples in docstrings where helpful
+
+## Testing
+- **File Naming**: Test files must be named `test_*.py`
+- **Function Naming**: Test functions must be named `test_*`
+- **Async Tests**: Use `pytest-asyncio` for async test functions
+- **Mocking**: Use `pytest-mock` for mocking dependencies
+
+## Configuration Access
+- **Environment Variables**: Use `python-dotenv` for environment configuration
+- **Settings**: Centralize configuration in [src/gitingest/config.py](mdc:src/gitingest/config.py)
+- **Validation**: Use Pydantic for configuration validation

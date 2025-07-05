@@ -1,0 +1,65 @@
+---
+globs: "src/server/templates/**/*"
+---
+
+# Jinja2 Template Development Guidelines
+
+## Template Structure
+- **Base Template**: Use [src/server/templates/base.jinja](mdc:src/server/templates/base.jinja) as the foundation
+- **Page Templates**: Create page-specific templates that extend base
+- **Components**: Reusable components in [src/server/templates/components/](mdc:src/server/templates/components/)
+- **Macros**: Define reusable macros in [src/server/templates/components/_macros.jinja](mdc:src/server/templates/components/_macros.jinja)
+
+## Template Inheritance
+- **Extend Base**: All page templates should extend base template
+- **Block Structure**: Use consistent block names (`title`, `content`, `scripts`, `styles`)
+- **Block Override**: Override blocks appropriately for page-specific content
+- **Super Calls**: Use `{{ super() }}` when extending block content
+
+## Component Organization
+- **Navbar**: Common navigation in [src/server/templates/components/navbar.jinja](mdc:src/server/templates/components/navbar.jinja)
+- **Footer**: Common footer in [src/server/templates/components/footer.jinja](mdc:src/server/templates/components/footer.jinja)
+- **Forms**: Form components like [src/server/templates/components/git_form.jinja](mdc:src/server/templates/components/git_form.jinja)
+- **Results**: Result display components in [src/server/templates/components/result.jinja](mdc:src/server/templates/components/result.jinja)
+
+## Styling and Assets
+- **Tailwind CSS**: Use Tailwind CSS classes for styling
+- **Component Styles**: Custom components in [src/server/templates/components/tailwind_components.html](mdc:src/server/templates/components/tailwind_components.html)
+- **Static Files**: Reference static assets using `/static/` prefix
+- **Icons**: Use SVG icons from [src/static/icons/](mdc:src/static/icons/)
+
+## Template Variables
+- **Context Data**: Use only necessary data passed from views
+- **Default Values**: Provide sensible defaults for optional variables
+- **Variable Validation**: Check variable existence before use
+- **Escaping**: Use `|safe` filter cautiously and only for trusted content
+
+## Form Handling
+- **Form Templates**: Use dedicated form templates for complex forms
+- **CSRF Protection**: Include CSRF tokens in forms
+- **Validation**: Display form validation errors appropriately
+- **User Input**: Properly escape and validate user input
+
+## JavaScript Integration
+- **Script Blocks**: Use `{% block scripts %}` for page-specific JavaScript
+- **Static JS**: Reference JavaScript files from [src/static/js/](mdc:src/static/js/)
+- **Inline Scripts**: Keep inline scripts minimal and prefer external files
+- **Event Handlers**: Use proper event handling patterns
+
+## Performance Considerations
+- **Template Caching**: Consider template caching for production
+- **Minimal Context**: Pass only required data to templates
+- **Asset Optimization**: Optimize images and static assets
+- **Lazy Loading**: Use lazy loading for non-critical resources
+
+## Accessibility
+- **Semantic HTML**: Use proper HTML semantic elements
+- **ARIA Labels**: Include ARIA labels for screen readers
+- **Color Contrast**: Ensure sufficient color contrast
+- **Keyboard Navigation**: Support keyboard navigation
+
+## Responsive Design
+- **Mobile First**: Design for mobile devices first
+- **Tailwind Breakpoints**: Use Tailwind responsive utilities
+- **Touch Targets**: Ensure touch targets are appropriately sized
+- **Viewport Meta**: Include proper viewport meta tags

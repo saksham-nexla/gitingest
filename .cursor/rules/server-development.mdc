@@ -1,0 +1,52 @@
+---
+globs: "src/server/**/*.py"
+---
+
+# FastAPI Server Development Guidelines
+
+## Router Structure
+- **Modular Routes**: Organize routes in separate files under [src/server/routers/](mdc:src/server/routers/)
+- **Router Registration**: Include all routers in [src/server/main.py](mdc:src/server/main.py)
+- **Route Naming**: Use descriptive route names that match functionality
+
+## Request/Response Handling
+- **Pydantic Models**: Use Pydantic models for request/response validation in [src/server/models.py](mdc:src/server/models.py)
+- **Form Handling**: Use form types defined in [src/server/form_types.py](mdc:src/server/form_types.py)
+- **Error Responses**: Return appropriate HTTP status codes with meaningful error messages
+- **Async Endpoints**: Use `async def` for all endpoint handlers
+
+## Rate Limiting
+- **SlowAPI**: Use SlowAPI for rate limiting as configured in [src/server/server_utils.py](mdc:src/server/server_utils.py)
+- **Per-Route Limits**: Apply appropriate rate limits per endpoint
+- **Error Handling**: Handle rate limit exceptions gracefully
+
+## Security
+- **Host Validation**: Use `TrustedHostMiddleware` for host validation
+- **Environment Variables**: Load sensitive configuration from environment variables
+- **CORS**: Configure CORS appropriately for production and development
+
+## Template Rendering
+- **Jinja2 Templates**: Use templates from [src/server/templates/](mdc:src/server/templates/)
+- **Template Inheritance**: Use base templates for consistent layout
+- **Context Data**: Pass minimal required data to templates
+- **Static Files**: Reference static files correctly using `/static/` prefix
+
+## API Documentation
+- **OpenAPI**: Ensure all endpoints have proper OpenAPI documentation
+- **Response Models**: Define response models for consistent API responses
+- **Parameter Documentation**: Document all query parameters and path parameters
+
+## Database Operations
+- **Query Processing**: Use utilities from [src/server/query_processor.py](mdc:src/server/query_processor.py)
+- **Async Operations**: Use async patterns for database operations
+- **Connection Management**: Properly handle database connections and cleanup
+
+## Static File Handling
+- **Static Mount**: Files are mounted at `/static/` from [src/static/](mdc:src/static/)
+- **File Types**: Support CSS, JS, images, and other static assets
+- **Caching**: Consider caching headers for static files
+
+## Health Checks
+- **Health Endpoint**: Maintain `/health` endpoint for monitoring
+- **Dependency Checks**: Include dependency health in health checks
+- **Response Format**: Return consistent health check response format

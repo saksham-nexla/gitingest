@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+# GitIngest Project Architecture
+
+## Overview
+GitIngest is a CLI tool and web service for analyzing and creating text dumps of codebases for LLMs. The project follows a modular architecture with clear separation of concerns.
+
+## Project Structure
+
+### Core Components
+- **Main Entry Point**: [src/gitingest/entrypoint.py](mdc:src/gitingest/entrypoint.py) - Primary ingestion logic
+- **CLI Interface**: [src/gitingest/__main__.py](mdc:src/gitingest/__main__.py) - Command-line interface
+- **Configuration**: [src/gitingest/config.py](mdc:src/gitingest/config.py) - Application configuration
+- **Git Operations**: [src/gitingest/clone.py](mdc:src/gitingest/clone.py) - Repository cloning functionality
+
+### Web Server
+- **FastAPI App**: [src/server/main.py](mdc:src/server/main.py) - Main FastAPI application
+- **API Routes**: [src/server/routers/](mdc:src/server/routers/) - Modular API endpoints
+- **Templates**: [src/server/templates/](mdc:src/server/templates/) - Jinja2 templates for web UI
+- **Static Assets**: [src/static/](mdc:src/static/) - CSS, JS, and media files
+
+### Data Processing
+- **Query Parser**: [src/gitingest/query_parser.py](mdc:src/gitingest/query_parser.py) - Parsing user queries
+- **Ingestion Engine**: [src/gitingest/ingestion.py](mdc:src/gitingest/ingestion.py) - Core file processing
+- **Output Formatter**: [src/gitingest/output_formatter.py](mdc:src/gitingest/output_formatter.py) - Result formatting
+
+### Utilities
+- **Authentication**: [src/gitingest/utils/auth.py](mdc:src/gitingest/utils/auth.py) - Git authentication
+- **File Operations**: [src/gitingest/utils/file_utils.py](mdc:src/gitingest/utils/file_utils.py) - File handling utilities
+- **Git Utils**: [src/gitingest/utils/git_utils.py](mdc:src/gitingest/utils/git_utils.py) - Git operations
+
+## Key Principles
+1. **Modular Design**: Each component has a single responsibility
+2. **Async/Await**: Use async patterns for I/O operations
+3. **Type Safety**: Full type hints throughout the codebase
+4. **Error Handling**: Comprehensive error handling with custom exceptions
+5. **Testing**: Comprehensive test coverage in [tests/](mdc:tests/)
+
+## Configuration Files
+- **Project Config**: [pyproject.toml](mdc:pyproject.toml) - Project metadata and tool configuration
+- **Dependencies**: [requirements.txt](mdc:requirements.txt) - Production dependencies
+- **Dev Dependencies**: [requirements-dev.txt](mdc:requirements-dev.txt) - Development dependencies
+- **Docker**: [Dockerfile](mdc:Dockerfile) and [docker-compose.yml](mdc:docker-compose.yml)

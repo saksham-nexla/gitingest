@@ -1,0 +1,67 @@
+---
+globs: "tests/**/*.py"
+---
+
+# Testing Guidelines for GitIngest
+
+## Test Organization
+- **Test Directory**: All tests are in [tests/](mdc:tests/) directory
+- **Test Structure**: Mirror the source structure in test organization
+- **Conftest**: Use [tests/conftest.py](mdc:tests/conftest.py) for shared fixtures
+- **Test Categories**: Organize tests by functionality (CLI, ingestion, server, etc.)
+
+## Test Naming
+- **File Names**: Use `test_*.py` pattern for test files
+- **Function Names**: Use `test_*` pattern for test functions
+- **Descriptive Names**: Use descriptive test names that explain what is being tested
+- **Class Names**: Use `Test*` pattern for test classes
+
+## Test Types
+- **Unit Tests**: Test individual functions and classes in isolation
+- **Integration Tests**: Test component interactions (e.g., [tests/test_flow_integration.py](mdc:tests/test_flow_integration.py))
+- **CLI Tests**: Test command-line interface functionality ([tests/test_cli.py](mdc:tests/test_cli.py))
+- **Feature Tests**: Test specific features like gitignore support ([tests/test_gitignore_feature.py](mdc:tests/test_gitignore_feature.py))
+
+## Async Testing
+- **Pytest-Asyncio**: Use `pytest-asyncio` for async test functions
+- **Async Mode**: Tests are configured with `asyncio_mode = "auto"`
+- **Event Loop**: Use function-scoped event loops for test isolation
+- **Async Fixtures**: Create async fixtures for async setup/teardown
+
+## Fixtures and Mocking
+- **Pytest-Mock**: Use `pytest-mock` for mocking dependencies
+- **Test Data**: Create reusable test data in fixtures
+- **Cleanup**: Ensure proper cleanup in fixtures using `yield` pattern
+- **Scope**: Use appropriate fixture scopes (function, class, module, session)
+
+## Test Data Management
+- **Temporary Files**: Use `tempfile` module for temporary test files
+- **Test Repositories**: Create minimal test repositories for Git operations
+- **Mock Data**: Use realistic but minimal mock data
+- **Environment**: Isolate tests from system environment
+
+## Coverage and Quality
+- **Coverage**: Aim for high test coverage across all modules
+- **Edge Cases**: Test edge cases and error conditions
+- **Input Validation**: Test input validation and error handling
+- **Performance**: Include performance tests for critical paths
+
+## Query Parser Tests
+- **Parser Tests**: Comprehensive tests in [tests/query_parser/](mdc:tests/query_parser/)
+- **Git Host Tests**: Test various Git hosting providers ([tests/query_parser/test_git_host_agnostic.py](mdc:tests/query_parser/test_git_host_agnostic.py))
+- **Query Validation**: Test query parsing and validation logic
+
+## Git Operations Tests
+- **Clone Tests**: Test repository cloning functionality ([tests/test_clone.py](mdc:tests/test_clone.py))
+- **Git Utils**: Test Git utility functions ([tests/test_git_utils.py](mdc:tests/test_git_utils.py))
+- **Authentication**: Test Git authentication mechanisms
+
+## Notebook Testing
+- **Jupyter Notebooks**: Test notebook processing ([tests/test_notebook_utils.py](mdc:tests/test_notebook_utils.py))
+- **Cell Processing**: Test individual cell processing
+- **Output Formatting**: Test notebook output formatting
+
+## Test Configuration
+- **Python Path**: Tests run with `src` in Python path
+- **Test Discovery**: Use `python_files = "test_*.py"` for discovery
+- **Async Default**: Use `asyncio_default_fixture_loop_scope = "function"`
