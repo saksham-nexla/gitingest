@@ -11,12 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from gitingest.utils.git_utils import (
-    create_git_auth_header,
-    create_git_command,
-    is_github_host,
-    validate_github_token,
-)
+from gitingest.utils.git_utils import create_git_auth_header, create_git_command, is_github_host, validate_github_token
 
 if TYPE_CHECKING:
     from pathlib import Path
