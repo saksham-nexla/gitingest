@@ -8,6 +8,7 @@ import tiktoken
 
 from gitingest.schemas import FileSystemNode, FileSystemNodeType
 from gitingest.utils.compat_func import readlink
+from gitingest.utils.comment_removal import remove_comments_from_content, should_remove_comments
 
 if TYPE_CHECKING:
     from gitingest.query_parser import IngestionQuery
@@ -47,7 +48,7 @@ def format_node(node: FileSystemNode, query: IngestionQuery) -> tuple[str, str, 
 
     tree = "Directory structure:\n" + _create_tree_structure(query, node=node)
 
-    content = _gather_file_contents(node)
+    content = _gather_file_contents(node, query)
 
     token_estimate = _format_token_count(tree + content)
     if token_estimate:
@@ -93,7 +94,7 @@ def _create_summary_prefix(query: IngestionQuery, *, single_file: bool = False) 
     return "\n".join(parts) + "\n"
 
 
-def _gather_file_contents(node: FileSystemNode) -> str:
+def _gather_file_contents(node: FileSystemNode, query: IngestionQuery | None = None) -> str:
     """Recursively gather contents of all files under the given node.
 
     This function recursively processes a directory node and gathers the contents of all files
@@ -111,10 +112,29 @@ def _gather_file_contents(node: FileSystemNode) -> str:
 
     """
     if node.type != FileSystemNodeType.DIRECTORY:
-        return node.content_string
+        content = node.content_string
+        
+        # Apply comment removal if requested
+        if query and query.remove_comments and should_remove_comments(node.path):
+            # Extract the actual content from the formatted content_string
+            separator = "=" * 48
+            parts = content.split(separator)
+            
+            if len(parts) >= 3:
+                header = separator + "\n" + parts[1] + "\n" + separator + "\n"
+                file_content = separator.join(parts[2:]).strip()
+                
+                # Remove comments from the file content
+                processed_content = remove_comments_from_content(
+                    file_content, node.path, query.comment_types
+                )
+                
+                content = header + processed_content + "\n\n"
+        
+        return content
 
     # Recursively gather contents of all files under the current directory
-    return "\n".join(_gather_file_contents(child) for child in node.children)
+    return "\n".join(_gather_file_contents(child, query) for child in node.children)
 
 
 def _create_tree_structure(

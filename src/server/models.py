@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Union
+from typing import Union, List
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -33,6 +33,10 @@ class IngestRequest(BaseModel):
         Glob/regex pattern string for file filtering.
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
+    remove_comments : bool
+        Whether to remove comments from the processed files.
+    comment_types : List[str]
+        List of comment types to remove (single_line, multi_line, documentation, all).
 
     """
 
@@ -41,6 +45,8 @@ class IngestRequest(BaseModel):
     pattern_type: PatternType = Field(default=PatternType.EXCLUDE, description="Pattern type for file filtering")
     pattern: str = Field(default="", description="Glob/regex pattern for file filtering")
     token: str | None = Field(default=None, description="GitHub PAT for private repositories")
+    remove_comments: bool = Field(default=False, description="Whether to remove comments from processed files")
+    comment_types: List[str] = Field(default=["all"], description="Types of comments to remove")
 
     @field_validator("input_text")
     @classmethod
@@ -79,6 +85,10 @@ class IngestSuccessResponse(BaseModel):
         The pattern type used for filtering.
     pattern : str
         The pattern used for filtering.
+    remove_comments : bool
+        Whether comments were removed from processed files.
+    comment_types : List[str]
+        Types of comments that were removed.
 
     """
 
@@ -90,6 +100,8 @@ class IngestSuccessResponse(BaseModel):
     default_max_file_size: int = Field(..., description="File size slider position used")
     pattern_type: str = Field(..., description="Pattern type used")
     pattern: str = Field(..., description="Pattern used")
+    remove_comments: bool = Field(..., description="Whether comments were removed")
+    comment_types: List[str] = Field(..., description="Types of comments that were removed")
 
 
 class IngestErrorResponse(BaseModel):
@@ -110,66 +122,3 @@ class IngestErrorResponse(BaseModel):
 
 # Union type for API responses
 IngestResponse = Union[IngestSuccessResponse, IngestErrorResponse]
-
-
-class QueryForm(BaseModel):
-    """Form data for the query.
-
-    Attributes
-    ----------
-    input_text : str
-        Text or URL supplied in the form.
-    max_file_size : int
-        The maximum allowed file size for the input, specified by the user.
-    pattern_type : str
-        The type of pattern used for the query (``include`` or ``exclude``).
-    pattern : str
-        Glob/regex pattern string.
-    token : str | None
-        GitHub personal access token (PAT) for accessing private repositories.
-
-    """
-
-    input_text: str
-    max_file_size: int
-    pattern_type: str
-    pattern: str
-    token: str | None = None
-
-    @classmethod
-    def as_form(
-        cls,
-        input_text: StrForm,
-        max_file_size: IntForm,
-        pattern_type: StrForm,
-        pattern: StrForm,
-        token: OptStrForm,
-    ) -> QueryForm:
-        """Create a QueryForm from FastAPI form parameters.
-
-        Parameters
-        ----------
-        input_text : StrForm
-            The input text provided by the user.
-        max_file_size : IntForm
-            The maximum allowed file size for the input.
-        pattern_type : StrForm
-            The type of pattern used for the query (``include`` or ``exclude``).
-        pattern : StrForm
-            Glob/regex pattern string.
-        token : OptStrForm
-            GitHub personal access token (PAT) for accessing private repositories.
-
-        Returns
-        -------
-        QueryForm
-            The QueryForm instance.
-
-        """
-        return cls(
-            input_text=input_text,
-            max_file_size=max_file_size,
-            pattern_type=pattern_type,
-            pattern=pattern,
-            token=token,
-        )

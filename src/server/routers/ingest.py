@@ -1,9 +1,9 @@
 """Ingest endpoint for the API."""
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
-from server.form_types import IntForm, OptStrForm, StrForm
+from server.form_types import QueryForm
 from server.models import IngestErrorResponse, IngestRequest, IngestSuccessResponse, PatternType
 from server.query_processor import process_query
 from server.server_utils import limiter
@@ -21,12 +21,7 @@ router = APIRouter()
 )
 @limiter.limit("10/minute")
 async def api_ingest(
-    request: Request,  # noqa: ARG001 (unused) pylint: disable=unused-argument
-    input_text: StrForm,
-    max_file_size: IntForm,
-    pattern_type: StrForm = "exclude",
-    pattern: StrForm = "",
-    token: OptStrForm = None,
+    request: Request, form_data: dict = Depends(QueryForm)
 ) -> JSONResponse:
     """Ingest a Git repository and return processed content.
 
@@ -38,16 +33,8 @@ async def api_ingest(
     ----------
     request : Request
         FastAPI request object
-    input_text : StrForm
-        Git repository URL or slug to ingest
-    max_file_size : IntForm
-        Maximum file size slider position (0-500) for filtering files
-    pattern_type : StrForm
-        Type of pattern to use for file filtering ("include" or "exclude")
-    pattern : StrForm
-        Glob/regex pattern string for file filtering
-    token : OptStrForm
-        GitHub personal access token (PAT) for accessing private repositories
+    form_data : dict
+        Form data containing input parameters
 
     Returns
     -------
@@ -55,14 +42,17 @@ async def api_ingest(
         Success response with ingestion results or error response with appropriate HTTP status code
 
     """
+    repo_url = form_data.get("input_text", "Unknown")
     try:
         # Validate input using Pydantic model
         ingest_request = IngestRequest(
-            input_text=input_text,
-            max_file_size=max_file_size,
-            pattern_type=PatternType(pattern_type),
-            pattern=pattern,
-            token=token,
+            input_text=repo_url,
+            max_file_size=form_data["max_file_size"],
+            pattern_type=PatternType(form_data["pattern_type"]),
+            pattern=form_data["pattern"],
+            token=form_data["token"],
+            remove_comments=form_data["remove_comments"],
+            comment_types=form_data["comment_types"],
         )
 
         result = await process_query(
@@ -71,6 +61,8 @@ async def api_ingest(
             pattern_type=ingest_request.pattern_type,
             pattern=ingest_request.pattern,
             token=ingest_request.token,
+            remove_comments=ingest_request.remove_comments,
+            comment_types=ingest_request.comment_types,
         )
 
         if isinstance(result, IngestErrorResponse):
@@ -90,7 +82,7 @@ async def api_ingest(
         # Handle validation errors with 400 status code
         error_response = IngestErrorResponse(
             error=f"Validation error: {ve!s}",
-            repo_url=input_text,
+            repo_url=repo_url,
         )
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -101,7 +93,7 @@ async def api_ingest(
         # Handle unexpected errors with 500 status code
         error_response = IngestErrorResponse(
             error=f"Internal server error: {exc!s}",
-            repo_url=input_text,
+            repo_url=repo_url,
         )
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

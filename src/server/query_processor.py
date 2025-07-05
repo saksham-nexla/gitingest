@@ -9,6 +9,7 @@ from gitingest.clone import clone_repo
 from gitingest.ingestion import ingest_query
 from gitingest.query_parser import IngestionQuery, parse_query
 from gitingest.utils.git_utils import validate_github_token
+from gitingest.utils.comment_removal import CommentType
 from server.models import IngestErrorResponse, IngestResponse, IngestSuccessResponse
 from server.server_config import MAX_DISPLAY_SIZE
 from server.server_utils import Colors, log_slider_to_size
@@ -20,6 +21,8 @@ async def process_query(
     pattern_type: str = "exclude",
     pattern: str = "",
     token: str | None = None,
+    remove_comments: bool = False,
+    comment_types: list[str] | None = None,
 ) -> IngestResponse:
     """Process a query by parsing input, cloning a repository, and generating a summary.
 
@@ -38,6 +41,10 @@ async def process_query(
         Pattern to include or exclude in the query, depending on the pattern type.
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
+    remove_comments : bool
+        Whether to remove comments from processed files.
+    comment_types : list[str] | None
+        List of comment types to remove.
 
     Returns
     -------
@@ -78,6 +85,23 @@ async def process_query(
             token=token,
         )
         query.ensure_url()
+        
+        # Set comment removal options
+        query.remove_comments = remove_comments
+        
+        if comment_types:
+            comment_type_enums = set()
+            for comment_type in comment_types:
+                if comment_type == "all":
+                    comment_type_enums.add(CommentType.ALL)
+                elif comment_type == "single_line":
+                    comment_type_enums.add(CommentType.SINGLE_LINE)
+                elif comment_type == "multi_line":
+                    comment_type_enums.add(CommentType.MULTI_LINE)
+                elif comment_type == "documentation":
+                    comment_type_enums.add(CommentType.DOCUMENTATION)
+            
+            query.comment_types = comment_type_enums
 
         # Sets the "<user>/<repo>" for the page title
         short_repo_url = f"{query.user_name}/{query.repo_name}"
@@ -127,6 +151,8 @@ async def process_query(
         default_max_file_size=slider_position,
         pattern_type=pattern_type,
         pattern=pattern,
+        remove_comments=remove_comments,
+        comment_types=comment_types or ["all"],
     )
 
 

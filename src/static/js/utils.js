@@ -149,6 +149,27 @@ function handleSubmit(event, showLoading = false) {
         formData.append('pattern', pattern.value);
     }
 
+    // Ensure comment removal fields are directly updated from UI state
+    const removeCommentsCheckbox = document.getElementById('removeComments');
+    if (removeCommentsCheckbox) {
+        formData.set('remove_comments', removeCommentsCheckbox.checked ? 'true' : 'false');
+    }
+
+    const commentCheckboxes = document.querySelectorAll('.comment-type-checkbox:checked');
+    const selectedTypes = Array.from(commentCheckboxes).map(cb => cb.value);
+    formData.set('comment_types', selectedTypes.join(','));
+
+    // Log all form data before submission
+    console.log('🚀 Form submission data:');
+    for (const [key, value] of formData.entries()) {
+        console.log(`  ${key}: ${value}`);
+    }
+    
+    // Log checkbox states
+    console.log('✅ Checkbox states:');
+    console.log(`  removeComments checked: ${removeCommentsCheckbox?.checked || false}`);
+    console.log(`  checked comment types: ${selectedTypes.join(',')}`);
+
     const originalContent = submitButton.innerHTML;
 
     if (showLoading) {

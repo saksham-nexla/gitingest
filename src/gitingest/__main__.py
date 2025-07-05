@@ -11,6 +11,7 @@ from typing_extensions import Unpack
 
 from gitingest.config import MAX_FILE_SIZE, OUTPUT_FILE_NAME
 from gitingest.entrypoint import ingest_async
+from gitingest.utils.comment_removal import CommentType
 
 
 class _CLIArgs(TypedDict):
@@ -23,6 +24,8 @@ class _CLIArgs(TypedDict):
     include_submodules: bool
     token: str | None
     output: str | None
+    remove_comments: bool
+    comment_types: tuple[str, ...]
 
 
 @click.command()
@@ -70,6 +73,19 @@ class _CLIArgs(TypedDict):
     default=None,
     help="Output file path (default: digest.txt in current directory). Use '-' for stdout.",
 )
+@click.option(
+    "--remove-comments",
+    is_flag=True,
+    default=False,
+    help="Remove comments from processed files to reduce token count.",
+)
+@click.option(
+    "--comment-types",
+    multiple=True,
+    default=["all"],
+    type=click.Choice(["single_line", "multi_line", "documentation", "all"]),
+    help="Types of comments to remove (can be specified multiple times).",
+)
 def main(**cli_kwargs: Unpack[_CLIArgs]) -> None:
     """Run the CLI entry point to analyze a repo / directory and dump its contents.
 
@@ -104,6 +120,11 @@ def main(**cli_kwargs: Unpack[_CLIArgs]) -> None:
     Include submodules:
         $ gitingest https://github.com/user/repo --include-submodules
 
+    Remove comments to reduce token count:
+        $ gitingest --remove-comments
+        $ gitingest --remove-comments --comment-types single_line multi_line
+        $ gitingest --remove-comments --comment-types documentation
+
     """
     asyncio.run(_async_main(**cli_kwargs))
 
@@ -119,6 +140,8 @@ async def _async_main(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    remove_comments: bool = False,
+    comment_types: tuple[str, ...] = ("all",),
 ) -> None:
     """Analyze a directory or repository and create a text dump of its contents.
 
@@ -148,6 +171,10 @@ async def _async_main(
     output : str | None
         The path where the output file will be written (default: ``digest.txt`` in current directory).
         Use ``"-"`` to write to ``stdout``.
+    remove_comments : bool
+        Whether to remove comments from processed files to reduce token count (default: ``False``).
+    comment_types : tuple[str, ...]
+        Types of comments to remove (default: ``("all",)``).
 
     Raises
     ------
@@ -167,6 +194,18 @@ async def _async_main(
         else:
             click.echo(f"Analyzing source, output will be written to '{output_target}'...", err=True)
 
+        # Convert comment types to CommentType enum
+        comment_type_enums = set()
+        for comment_type in comment_types:
+            if comment_type == "all":
+                comment_type_enums.add(CommentType.ALL)
+            elif comment_type == "single_line":
+                comment_type_enums.add(CommentType.SINGLE_LINE)
+            elif comment_type == "multi_line":
+                comment_type_enums.add(CommentType.MULTI_LINE)
+            elif comment_type == "documentation":
+                comment_type_enums.add(CommentType.DOCUMENTATION)
+
         summary, _, _ = await ingest_async(
             source,
             max_file_size=max_size,
@@ -177,6 +216,8 @@ async def _async_main(
             include_submodules=include_submodules,
             token=token,
             output=output_target,
+            remove_comments=remove_comments,
+            comment_types=comment_type_enums,
         )
     except Exception as exc:
         # Convert any exception into Click.Abort so that exit status is non-zero

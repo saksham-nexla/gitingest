@@ -30,9 +30,11 @@
             <!-- Hidden fields -->
             <input type="hidden" name="pattern_type" value="exclude">
             <input type="hidden" name="pattern" value="">
+            <input type="hidden" name="remove_comments" value="false">
+            <input type="hidden" name="comment_types" value="all">
             <!-- Controls row: pattern selector, file size slider, PAT checkbox with PAT field below -->
             <div id="controlsRow"
-                 class="mt-7 grid gap-6 grid-cols-1 sm:grid-cols-[3fr_2fr] md:gap-x-10 lg:grid-cols-[5fr_4fr_4fr] lg:gap-y-0">
+                 class="mt-7 grid gap-6 grid-cols-1 sm:grid-cols-[3fr_2fr] md:gap-x-10 lg:grid-cols-[5fr_4fr_4fr_4fr] lg:gap-y-0">
                 <!-- Pattern selector -->
                 <div class="w-full relative self-center">
                     <div class="w-full h-full rounded bg-gray-900 translate-y-1 translate-x-1 absolute inset-0 z-10"></div>
@@ -82,6 +84,50 @@
                            required
                            value="{{ default_max_file_size }}"
                            class="w-full h-3 bg-[#FAFAFA] bg-no-repeat bg-[length:50%_100%] bg-[#ebdbb7] appearance-none border-[3px] border-gray-900 rounded-sm focus:outline-none bg-gradient-to-r from-[#FE4A60] to-[#FE4A60] [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-sm [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-solid [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-gray-900 [&::-webkit-slider-thumb]:shadow-[3px_3px_0_#000]">
+                </div>
+                <!-- Comment removal controls -->
+                <div class="flex flex-col items-start w-full">
+                    <!-- Remove comments checkbox -->
+                    <div class="flex items-center space-x-2 mb-2">
+                        <label for="removeComments"
+                               class="flex gap-2 text-gray-900 cursor-pointer">
+                            <div class="relative w-6 h-6">
+                                <input type="checkbox"
+                                       id="removeComments"
+                                       onchange="toggleCommentRemoval()"
+                                       class="cursor-pointer peer appearance-none w-full h-full rounded-sm border-[3px] border-current bg-white m-0 text-current shadow-[3px_3px_0_currentColor]" />
+                                <span class="absolute inset-0 w-3 h-3 m-auto scale-0 transition-transform duration-150 ease-in-out shadow-[inset_1rem_1rem_#FE4A60] bg-[CanvasText] origin-bottom-left peer-checked:scale-100"
+                                      style="clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%)"></span>
+                            </div>
+                            Remove Comments
+                        </label>
+                        <span class="badge-new">TOKEN SAVER</span>
+                    </div>
+                    <!-- Comment types selector -->
+                    <div id="commentTypesContainer"
+                         class="hidden w-full">
+                        <div class="relative w-full">
+                            <div class="w-full h-full rounded bg-gray-900 translate-y-1 translate-x-1 absolute inset-0 z-10"></div>
+                            <div class="flex flex-col relative z-20 border-[3px] border-gray-900 rounded bg-white p-2 space-y-2">
+                                                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="checkbox" value="single_line" class="comment-type-checkbox" onchange="handleCommentTypeChange(this)">
+                                     <span class="text-sm">Single-line (//, #, --)</span>
+                                 </label>
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="checkbox" value="multi_line" class="comment-type-checkbox" onchange="handleCommentTypeChange(this)">
+                                     <span class="text-sm">Multi-line (/* */)</span>
+                                 </label>
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="checkbox" value="documentation" class="comment-type-checkbox" onchange="handleCommentTypeChange(this)">
+                                     <span class="text-sm">Documentation (/** */, ///)</span>
+                                 </label>
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="checkbox" value="all" class="comment-type-checkbox" checked onchange="handleCommentTypeChange(this)">
+                                     <span class="text-sm font-medium">All comments</span>
+                                 </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- PAT checkbox with PAT field below -->
                 <div class="flex flex-col items-start w-full sm:col-span-2 lg:col-span-1 lg:row-span-2 lg:pt-3.5">

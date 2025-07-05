@@ -6,8 +6,10 @@ from dataclasses import dataclass
 from pathlib import Path  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
 
 from pydantic import BaseModel, Field
+from typing import Set
 
 from gitingest.config import MAX_FILE_SIZE
+from gitingest.utils.comment_removal import CommentType
 
 
 @dataclass
@@ -101,6 +103,8 @@ class IngestionQuery(BaseModel):  # pylint: disable=too-many-instance-attributes
     ignore_patterns: set[str] = set()  # TODO: ignore_patterns and include_patterns have the same type
     include_patterns: set[str] | None = None
     include_submodules: bool = False
+    remove_comments: bool = False
+    comment_types: Set[CommentType] = Field(default_factory=lambda: {CommentType.ALL})
 
     def extract_clone_config(self) -> CloneConfig:
         """Extract the relevant fields for the CloneConfig object.

@@ -30,6 +30,8 @@ async def ingest_async(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    remove_comments: bool = False,
+    comment_types: set | None = None,
 ) -> tuple[str, str, str]:
     """Ingest a source and process its contents.
 
@@ -62,6 +64,10 @@ async def ingest_async(
         File path where the summary and content should be written.
         If ``"-"`` (dash), the results are written to ``stdout``.
         If ``None``, the results are not written to a file.
+    remove_comments : bool
+        Whether to remove comments from processed files to reduce token count (default: ``False``).
+    comment_types : set | None
+        Set of comment types to remove (default: ``None``).
 
     Returns
     -------
@@ -90,6 +96,9 @@ async def ingest_async(
         _override_branch_and_tag(query, branch=branch, tag=tag)
 
     query.include_submodules = include_submodules
+    query.remove_comments = remove_comments
+    if comment_types is not None:
+        query.comment_types = comment_types
 
     async with _clone_repo_if_remote(query, token=token):
         summary, tree, content = ingest_query(query)
@@ -109,6 +118,8 @@ def ingest(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    remove_comments: bool = False,
+    comment_types: set | None = None,
 ) -> tuple[str, str, str]:
     """Provide a synchronous wrapper around ``ingest_async``.
 
@@ -167,6 +178,8 @@ def ingest(
             include_submodules=include_submodules,
             token=token,
             output=output,
+            remove_comments=remove_comments,
+            comment_types=comment_types,
         ),
     )
 
